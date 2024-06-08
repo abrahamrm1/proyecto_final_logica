@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .calculator {
+            width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1f1f1f;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        input[type="button"] {
+            width: 70px;
+            height: 70px;
+            margin: 5px;
+            font-size: 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #666;
+            color: #fff;
+        }
+
+        input[type="button"]:hover {
+            background-color: #333;
+        }
+
+        #result {
+            width: 100%;
+            height: 70px;
+            margin-bottom: 10px;
+            font-size: 32px;
+            text-align: right;
+            padding: 10px;
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #history {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="btn btn-primary">Inicio</a>
+
+
+    <div class="calculator">
+        <input type="text" id="result" readonly>
+        <input type="button" value="7" onclick="appendToResult('7')">
+        <input type="button" value="8" onclick="appendToResult('8')">
+        <input type="button" value="9" onclick="appendToResult('9')">
+        <input type="button" value="/" onclick="appendToResult('/')"><br>
+        <input type="button" value="4" onclick="appendToResult('4')">
+        <input type="button" value="5" onclick="appendToResult('5')">
+        <input type="button" value="6" onclick="appendToResult('6')">
+        <input type="button" value="*" onclick="appendToResult('*')"><br>
+        <input type="button" value="1" onclick="appendToResult('1')">
+        <input type="button" value="2" onclick="appendToResult('2')">
+        <input type="button" value="3" onclick="appendToResult('3')">
+        <input type="button" value="-" onclick="appendToResult('-')"><br>
+        <input type="button" value="0" onclick="appendToResult('0')">
+        <input type="button" value="." onclick="appendToResult('.')">
+        <input type="button" value="=" onclick="calculate()">
+        <input type="button" value="+" onclick="appendToResult('+')"><br>
+        <input type="button" value="C" onclick="clearResult()">
+        <input type="button" value="√" onclick="appendToResult('Math.sqrt(')">
+        <input type="button" value="^" onclick="appendToResult('**')">
+        <input type="button" value="sin" onclick="appendToResult('Math.sin(degToRad(')">
+        <input type="button" value="cos" onclick="appendToResult('Math.cos(degToRad(')">
+        <input type="button" value="tan" onclick="appendToResult('Math.tan(degToRad(')"><br>
+        <div id="history"></div>
+    </div>
+
+    <script>
+        function degToRad(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+
+        function appendToResult(value) {
+            document.getElementById("result").value += value;
+        }
+
+        function calculate() {
+            try {
+                var expression = document.getElementById("result").value;
+                // Asegurarse de cerrar las funciones trigonométricas con paréntesis
+                if (expression.includes('Math.sin') || expression.includes('Math.cos') || expression.includes('Math.tan')) {
+                    expression += '))';
+                }
+                var result = eval(expression);
+                document.getElementById("history").innerHTML += expression + " = " + result + "<br>";
+                document.getElementById("result").value = result;
+            } catch (error) {
+                document.getElementById("result").value = "Error";
+            }
+        }
+
+        function clearResult() {
+            document.getElementById("result").value = "";
+        }
+    </script>
+</body>
+</html>
+
+
+

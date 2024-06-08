@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Interactiva Avanzada</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, button, textarea {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #dynamicMessage {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #333;
+        }
+        #chartContainer {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="btn btn-primary">Inicio</a>
+
+    <div class="container">
+        <h1>Interactividad Avanzada</h1>
+        <h2>Registro de Usuario</h2>
+
+        <form id="registrationForm">
+            <label for="username">Nombre de Usuario:</label>
+            <input type="text" id="username" name="username" required oninput="validateUsername()">
+
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" required oninput="validateEmail()">
+
+            <label for="age">Edad:</label>
+            <input type="number" id="age" name="age" required oninput="updateChart()">
+
+            <label for="height">Altura (cm):</label>
+            <input type="number" id="height" name="height" required>
+
+            <label for="weight">Peso (kg):</label>
+            <input type="number" id="weight" name="weight" required>
+
+            <label for="muscleMass">Masa Muscular (%):</label>
+            <input type="number" id="muscleMass" name="muscleMass" required>
+
+            <button type="button" onclick="submitForm()">Registrar</button>
+        </form>
+
+        <div id="dynamicMessage">Por favor, ingresa tus datos.</div>
+
+        <div id="chartContainer">
+            <canvas id="userChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Validación del nombre de usuario
+        function validateUsername() {
+            const username = document.getElementById('username').value;
+            const message = document.getElementById('dynamicMessage');
+            if (username.length < 3) {
+                message.textContent = 'El nombre de usuario debe tener al menos 3 caracteres.';
+                message.style.color = 'red';
+            } else {
+                message.textContent = 'Nombre de usuario válido.';
+                message.style.color = 'green';
+            }
+        }
+
+        // Validación del correo electrónico
+        function validateEmail() {
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('dynamicMessage');
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                message.textContent = 'Por favor, ingresa un correo electrónico válido.';
+                message.style.color = 'red';
+            } else {
+                message.textContent = 'Correo electrónico válido.';
+                message.style.color = 'green';
+            }
+        }
+
+        // Configuración inicial del gráfico
+        const ctx = document.getElementById('userChart').getContext('2d');
+        const userChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Edad'],
+                datasets: [{
+                    label: 'Edad del Usuario',
+                    data: [0],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Actualizar gráfico en tiempo real
+        function updateChart() {
+            const age = document.getElementById('age').value;
+            userChart.data.datasets[0].data[0] = age;
+            userChart.update();
+        }
+
+        // Enviar formulario
+        function submitForm() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const age = document.getElementById('age').value;
+            const height = document.getElementById('height').value;
+            const weight = document.getElementById('weight').value;
+            const muscleMass = document.getElementById('muscleMass').value;
+            const message = document.getElementById('dynamicMessage');
+
+            if (username.length >= 3 && email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) && age >= 18 && height && weight && muscleMass) {
+                const bmi = calculateBMI(weight, height);
+                const weightStatus = getWeightStatus(bmi);
+                const muscleMassKg = calculateMuscleMass(weight, muscleMass);
+
+                message.textContent = `¡Registro exitoso! Bienvenido, ${username}. IMC: ${bmi.toFixed(2)} (${weightStatus}). Masa Muscular: ${muscleMassKg.toFixed(2)} kg`;
+                message.style.color = 'blue';
+            } else {
+                if (age < 18) {
+                    message.textContent = 'Debe ser mayor de 18 años para registrarse.';
+                } else {
+                    message.textContent = 'Por favor, completa todos los campos correctamente.';
+                }
+                message.style.color = 'red';
+            }
+        }
+
+        // Calcular IMC
+        function calculateBMI(weight, height) {
+            height = height / 100; // Convertir altura a metros
+            return weight / (height * height);
+        }
+
+        // Obtener estado de peso basado en IMC
+        function getWeightStatus(bmi) {
+            if (bmi < 18.5) {
+                return 'Bajo peso';
+            } else if (bmi < 24.9) {
+                return 'Peso normal';
+            } else if (bmi < 29.9) {
+                return 'Sobrepeso';
+            } else {
+                return 'Obesidad';
+            }
+        }
+
+        // Calcular masa muscular
+        function calculateMuscleMass(weight, muscleMass) {
+            return weight * (muscleMass / 100);
+        }
+    </script>
+</body>
+</html>
+

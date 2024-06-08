@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversor de Unidades de Medición</title>
+<style>
+    body {
+        font-family: Arial, sans-serif; 
+        background-color: white;
+    }
+    .container {
+        max-width: 400px;
+        margin: 50px auto;
+        text-align: center;
+    }
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        box-sizing: border-box;
+    }
+    button {
+        background-color: #d36c0a;
+        color: black;
+        padding: 10px 20px;
+        margin: 10px 0;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+    <a href="../index.html" class="btn btn-primary">Inicio</a>
+
+<div class="container">
+    <h2>Conversor de Unidades de Medición</h2>
+    <input type="number" id="inputNumber" placeholder="Ingresa el valor que deseas convertir">
+    <select id="selectUnit">
+        <option value="KM">Kilómetros (km)</option>
+        <option value="MI">Millas (mi)</option>
+    </select>
+    <button onclick="convertir()">Convertir</button>
+    <p id="resultado"></p>
+</div>
+
+<script>
+    function convertir() {
+        var valor = parseFloat(document.getElementById("inputNumber").value);
+        var unidad = document.getElementById("selectUnit").value;
+        var resultado;
+        if (unidad === "km") {
+            resultado = valor * 0.621371; // Kilómetros a millas
+            document.getElementById("resultado").innerHTML = valor + " kilómetros son " + resultado.toFixed(2) + " millas.";
+        } else {
+            resultado = valor * 1.60934; // Millas a kilómetros
+            document.getElementById("resultado").innerHTML = valor + " millas son " + resultado.toFixed(2) + " kilómetros.";
+        }
+    }
+</script>
+
+</body>
+</html>
